@@ -69,8 +69,7 @@ Example:
     14 |   |   |   |   |   |   |   |   |   |   |   |   |   |   |  
 
 #TODO
-- Built single player mode with computer opponent
-- Built a simple GUI for people hating the console
+- Built a simple GUI for people hating the console (work in progress, use `-gui` to use it)
 
 #License
 
