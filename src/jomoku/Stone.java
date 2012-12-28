@@ -1,83 +1,133 @@
 package jomoku;
 
 /**
- * Models a black or white stone of this game
+ * Models a black or white stone of this game.
  *
  * @see http://en.wikipedia.org/wiki/Five_in_a_Row_%28game%29
  * @author Johannes Bechberger
+ * @version 1.0
  */
 public class Stone {
 
     /**
-     * Player owning this stone
+     * Player owning this stone.
      */
-    public final Player PLAYER;
+    private Player player;
     /**
-     * Position of this stone on the board
+     * Position of this stone on the board.
      */
-    public final Position POSITION;
+    private Position position;
     /**
-     * The board, this stone is set on
+     * The board, this stone is set on.
      */
-    public final Board BOARD;
+    private Board board;
 
     /**
-     * Constructs a stone object
+     * Constructs a stone object.
      *
      * @param player Player owning this stone
      * @param position Position of this stone on the board
-     * @param board The board, this stone is set on
      */
     public Stone(Player player, Position position) {
-        this.PLAYER = player;
-        this.POSITION = position;
-        this.BOARD = player.getBoard();
+        this.player = player;
+        this.position = position;
+        this.board = player.getBoard();
     }
 
     @Override
     public String toString() {
-        return POSITION.toString();
+        return position.toString();
+    }
+
+    /**
+     * @return the player
+     */
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * @return the position
+     */
+    public Position getPosition() {
+        return position;
+    }
+
+    /**
+     * @return the board
+     */
+    public Board getBoard() {
+        return board;
     }
     
     /**
-     * Simple position container
+     * Simple position container.
      */
     public static class Position {
 
         /**
-         * Column number, 0 is the first column
+         * Column number, 0 is the first column.
          */
-        public final int COLUMN;
+        private int column;
         /**
-         * Row number, 0 is the first row
+         * Row number, 0 is the first row.
          */
-        public final int ROW;
+        private int row;
 
         /**
-         * Constructs a position
+         * Constructs a position.
          *
          * @param column Column number, 0 is the first column
          * @param row Row number, 0 is the first row
          */
         public Position(int column, int row) {
-            this.COLUMN = column;
-            this.ROW = row;
+            this.column = column;
+            this.row = row;
         }
 
         /**
          * Does this point lays in the given boundaries?
          *
-         * @param number_of_columns
-         * @param number_of_rows
+         * @param numberOfColumns Number of columns of the boundary
+         * @param numberOfRows Number of rows of the boundary
          * @return Does this point lays in the given boundaries?
          */
-        public boolean isInBounds(int number_of_columns, int number_of_rows) {
-            return COLUMN < number_of_columns && ROW < number_of_rows;
+        public boolean isInBounds(int numberOfColumns, int numberOfRows) {
+            return column < numberOfColumns && row < numberOfRows;
         }
 
         @Override
         public String toString() {
-            return COLUMN + "x" + ROW;
+            return column + "x" + row;
+        }
+
+        /**
+         * @return the column
+         */
+        public int getColumn() {
+            return column;
+        }
+
+        /**
+         * @return the row
+         */
+        public int getRow() {
+            return row;
+        }
+        
+        /**
+         * 
+         * @return the column
+         */
+        public int getX(){
+            return column;
+        }
+        
+        /**
+         * @return the row
+         */
+        public int getY() {
+            return row;
         }
     }
 }
