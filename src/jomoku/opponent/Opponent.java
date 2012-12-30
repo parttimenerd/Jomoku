@@ -11,7 +11,7 @@ import jomoku.ui.AbstractUI;
  * Models an opponent player
  *
  * @author Johannes Bechberger
- * @version 1.0
+ * @version 0.3
  */
 public abstract class Opponent extends AbstractPlayer {
 

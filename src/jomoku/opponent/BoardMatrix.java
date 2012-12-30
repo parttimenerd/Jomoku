@@ -10,7 +10,7 @@ import jomoku.Stone;
  * set a stone on this field) of each field.
  *
  * @author Johannes Bechberger
- * @version 1.0
+ * @version 0.2
  */
 public class BoardMatrix {
 

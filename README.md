@@ -8,7 +8,7 @@ Black plays first, and players alternate in placing a stone of their color on an
 The programm itself has no dependencies - but isn't built for speed, so it can be a bit slow on old hardware - it's built for fun...
 
 #Usage
-Just execute the JAR file on the console (for more informations use the argument "-help").
+Just execute the JAR file on the console (for more informations and options use the argument `-help`).
 Then the player being the black player or the player being the white player is prompted to type in the position he or she want's to place a stone on. The format of this input is "[column number]x[row number"].
 The board being played on is also printed on the console after every player action.
 
@@ -69,7 +69,7 @@ Example:
     14 |   |   |   |   |   |   |   |   |   |   |   |   |   |   |  
 
 #TODO
-- Built a simple GUI for people hating the console (work in progress, use `-gui` to use it)
+- Improve opponent engine
 
 #License
 
