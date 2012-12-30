@@ -129,5 +129,10 @@ public class Stone {
         public int getY() {
             return row;
         }
+
+        @Override
+        public Stone.Position clone() {
+            return new Stone.Position(column, row);
+        }
     }
 }

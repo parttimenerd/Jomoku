@@ -10,7 +10,7 @@ import jomoku.ui.AbstractUI;
  * Models an opponent GUI player.
  * 
  * @author Johannes Bechberger
- * @version 1.0
+ * @version 0.4
  */
 public class GUIOpponent extends Opponent {
 

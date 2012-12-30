@@ -1,8 +1,11 @@
 package jomoku.ui.gui;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import jomoku.Game;
 import jomoku.Game.FieldType;
@@ -22,6 +25,11 @@ public class Frame extends javax.swing.JFrame {
     private ConcurrentLinkedQueue<FieldTypePositionContainer> fieldsToAddQueue = new ConcurrentLinkedQueue<>();
     private boolean forcePaintAll = false;
     private Stone.Position currentStonePosition;
+    private int shift = 15;
+    private int yAddShift = 22;
+    private int padding = 1;
+//    private Stone.Position currentPos;
+    private StonePositionGUIArea[][] guiAreas;
 
     /**
      * Creates new form Frame
@@ -40,18 +48,16 @@ public class Frame extends javax.swing.JFrame {
         initComponents();
         this.game = game;
         fields = game.getBoardFieldTypes();
+        guiAreas = new StonePositionGUIArea[fields.length][fields[0].length];
     }
 
     @Override
     public void paint(Graphics g) {
         //super.paint(g);
-        int shift = 15;
-        int y_add_shift = 22;
         int boardWidth = getWidth() - (shift * 2);
-        int boardHeight = getHeight() - (shift * 2) - y_add_shift;
+        int boardHeight = getHeight() - (shift * 2) - yAddShift;
         double fieldWidth = boardWidth * 1.0 / game.getNumberOfColumns();
         double fieldHeight = boardHeight * 1.0 / game.getNumberOfRows();
-        int padding = 1;
         int fieldWidthInt = (int) Math.round(fieldWidth);
         int fieldHeightInt = (int) Math.round(fieldHeight);
         int fieldStoneWidth = (int) Math.round(fieldWidth) - (padding * 2);
@@ -62,7 +68,7 @@ public class Frame extends javax.swing.JFrame {
             while (field != null) {
                 fields[field.position.getColumn()][field.position.getRow()] = field.fieldType;
                 x = (int) Math.round(fieldWidth * field.position.getColumn()) + shift;
-                y = (int) Math.round(fieldHeight * field.position.getRow()) + shift + y_add_shift;
+                y = (int) Math.round(fieldHeight * field.position.getRow()) + shift + yAddShift;
                 if (field.fieldType != Game.FieldType.BLOCKED) {
                     if (field.fieldType != Game.FieldType.FREE) {
                         g.setColor(field.fieldType.getColor());
@@ -76,13 +82,13 @@ public class Frame extends javax.swing.JFrame {
             }
         } else {
             g.setColor(Game.FieldType.FREE.getColor());
-            g.fillRect(shift, shift + y_add_shift, boardWidth, boardHeight);
+            g.fillRect(shift, shift + yAddShift, boardWidth, boardHeight);
             for (int i = 0; i < fields.length; i++) {
                 Game.FieldType[] row = fields[i];
                 for (int j = 0; j < row.length; j++) {
                     Game.FieldType type = row[j];
                     x = (int) Math.round(fieldWidth * i) + shift;
-                    y = (int) Math.round(fieldHeight * j) + shift + y_add_shift;
+                    y = (int) Math.round(fieldHeight * j) + shift + yAddShift;
                     if (type != Game.FieldType.BLOCKED) {
                         if (type != Game.FieldType.FREE) {
                             g.setColor(type.getColor());
@@ -92,17 +98,18 @@ public class Frame extends javax.swing.JFrame {
                         g.setColor(type.getColor());
                         g.fillRect(x, y, fieldWidthInt, fieldHeightInt);
                     }
+                    guiAreas[i][j] = new StonePositionGUIArea(i, j, new Rectangle(x, y, fieldWidthInt, fieldHeightInt));
                 }
             }
             g.setColor(Color.darkGray);
-            y = shift + y_add_shift;
+            y = shift + yAddShift;
             for (int i = 0; i < fields.length + 1; i++) {
                 x = (int) Math.round(fieldWidth * i) + shift;
                 g.drawLine(x, y, x, y + boardHeight);
             }
             x = shift;
             for (int i = 0; i < fields[0].length + 1; i++) {
-                y = (int) Math.round(fieldHeight * i) + shift + y_add_shift;
+                y = (int) Math.round(fieldHeight * i) + shift + yAddShift;
                 g.drawLine(x, y, x + boardWidth, y);
             }
             forcePaintAll = false;
@@ -156,6 +163,11 @@ public class Frame extends javax.swing.JFrame {
                 formComponentResized(evt);
             }
         });
+        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                formMouseMoved(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -180,6 +192,11 @@ public class Frame extends javax.swing.JFrame {
         repaint();
     }//GEN-LAST:event_formComponentResized
 
+    private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
+//        currentPos = pixelPointToStonePosition(evt.getPoint());//System.out.println("--- " + pixelPointToStonePosition(evt.getPoint()));
+//        System.out.println(evt.getPoint());
+    }//GEN-LAST:event_formMouseMoved
+
     /**
      * Calculates the position of the stone at the given pixel point.
      *
@@ -187,11 +204,20 @@ public class Frame extends javax.swing.JFrame {
      * @return the position of the stone
      */
     public Stone.Position pixelPointToStonePosition(Point point) {
-        double fieldWidth = getWidth() * 1.0 / game.getNumberOfColumns();
-        double fieldHeight = getHeight() * 1.0 / game.getNumberOfRows();
-        Stone.Position pos = new Stone.Position((int) Math.round(point.getX() / fieldWidth),
-                (int) Math.round(point.getY() / fieldHeight));
-        return pos;
+//        double fieldWidth = (getWidth() - (shift * 2)) / game.getNumberOfColumns();
+//        double fieldHeight = (getHeight() - (shift * 2) - yAddShift) / game.getNumberOfRows();
+//        Stone.Position pos = new Stone.Position((int) Math.round((point.getX() - shift) / fieldWidth),
+//                (int) Math.round((point.getY() - shift  - yAddShift) / fieldHeight));
+        for (int i = 0; i < guiAreas.length; i++) {
+            StonePositionGUIArea[] row = guiAreas[i];
+            for (int j = 0; j < row.length; j++) {
+                StonePositionGUIArea stonePositionGUIArea = row[j];
+                if (stonePositionGUIArea.isInGUIArea(point)) {
+                    return stonePositionGUIArea.getStonePosition();
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -206,6 +232,9 @@ public class Frame extends javax.swing.JFrame {
         repaint();
     }
 
+//    public Position getCurrentPos() {
+//        return currentPos;
+//    }
     /**
      * @param args the command line arguments
      */
@@ -252,6 +281,51 @@ public class Frame extends javax.swing.JFrame {
         public FieldTypePositionContainer(FieldType fieldType, Position position) {
             this.fieldType = fieldType;
             this.position = position;
+        }
+    }
+
+    private class StonePositionGUIArea extends Stone.Position {
+
+        private Rectangle guiArea;
+
+        /**
+         *
+         * @param column column number of the stone, 0 is the first column
+         * @param row row number of the stone, 0 is the first row
+         * @param guiArea area displaying this stone on the GUI
+         */
+        public StonePositionGUIArea(int column, int row, Rectangle guiArea) {
+            super(column, row);
+            this.guiArea = guiArea;
+        }
+
+        /**
+         *
+         * @return the inherited Stone.Position
+         */
+        public Stone.Position getStonePosition() {
+            return new Stone.Position(getColumn(), getRow());
+        }
+
+        /**
+         * Does the GUI Area of this point contains the given point?
+         *
+         * @param point given point
+         * @return Does the GUI Area of this point contains the given point?
+         */
+        public boolean isInGUIArea(Point point) {
+            return guiArea.contains(point);
+        }
+
+        /**
+         * Does the GUI Area of this point contains the given point?
+         *
+         * @param x x coordinate of the given point
+         * @param y y coordinate of the given point
+         * @return Does the GUI Area of this point contains the given point?
+         */
+        public boolean isInGUIArea(int x, int y) {
+            return guiArea.contains(x, y);
         }
     }
 }

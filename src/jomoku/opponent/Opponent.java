@@ -16,7 +16,7 @@ import jomoku.ui.AbstractUI;
 public abstract class Opponent extends AbstractPlayer {
 
     private final double opponentImportanceFactor = 1 + (Math.random() * 0.2);
-    private double randomizationFactor = 0.001;
+    private double randomizationFactor = 0.000;
     private Board own_board;
     private Board opponent_board;
 

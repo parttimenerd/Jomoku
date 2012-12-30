@@ -134,7 +134,7 @@ public class Board {
      * @return Does the player owning this board win?
      */
     public boolean doesPlayerWin() {
-        if (checkForWinningRow(stones) || checkForWinningLeftTopToRightBottomDiagonal(stones)) {
+        if (checkForWinningRow(stones) || checkForWinningDiagonal(stones)) {
             return true;
         }
         Stone[][] horizontal_row = new Stone[game.getNumberOfRows()][game.getNumberOfColumns()];
@@ -144,10 +144,7 @@ public class Board {
                 horizontal_row[j][i] = row[j];
             }
         }
-        if (checkForWinningRow(horizontal_row) || checkForWinningLeftTopToRightBottomDiagonal(horizontal_row)) {
-            return true;
-        }
-        return false;
+        return checkForWinningRow(horizontal_row);
     }
 
     /**
@@ -205,26 +202,27 @@ public class Board {
         return false;
     }
 
-    //TODO
-    private boolean checkForWinningLeftTopToRightBottomDiagonal(Stone[][] rows) {
+    private boolean checkForWinningDiagonal(Stone[][] rows) {
         for (int i = 0; i < rows.length; i++) {
-            if (checkForWinningLeftTopToRightBottomDiagonal(rows, i, 0)){
+            if (checkForWinningDiagonal(rows, i, 0)) {
                 return true;
             }
         }
         for (int i = 0; i < rows[0].length; i++) {
-            if (checkForWinningLeftTopToRightBottomDiagonal(rows, 0, i)){
+            if (checkForWinningDiagonal(rows, 0, i)) {
                 return true;
             }
         }
-        return checkForWinningLeftTopToRightBottomDiagonal(rows, 1, 1);
+        return false;
     }
 
-    private boolean checkForWinningLeftTopToRightBottomDiagonal(Stone[][] array, int start_column, int start_row) {
+    private boolean checkForWinningDiagonal(Stone[][] array, int start_column, int start_row) {
         int columns = array.length;
         int rows = array[0].length;
         int max_stone_row_length = 0;
         int stone_row_length = 0;
+        int max_stone_row_length2 = 0;
+        int stone_row_length2 = 0;
         for (int i = 0; i + start_column < columns && i + start_row < rows; i++) {
             if (array[start_column + i][start_row + i] != null) {
                 stone_row_length += 1;
@@ -234,8 +232,17 @@ public class Board {
                 }
                 stone_row_length = 0;
             }
+            if (array[rows - start_column - i - 1][start_row + i] != null) {
+                stone_row_length2 += 1;
+            } else {
+                if (stone_row_length2 > max_stone_row_length2) {
+                    max_stone_row_length2 = stone_row_length2;
+                }
+                stone_row_length2 = 0;
+            }
         }
-        return max_stone_row_length >= game.getNumberOfStonesInARowToWin();
+        return Math.max(Math.max(max_stone_row_length, stone_row_length),
+                Math.max(max_stone_row_length2, stone_row_length2)) >= game.getNumberOfStonesInARowToWin();
     }
 
     /**
@@ -296,19 +303,19 @@ public class Board {
     }
 
     /**
-     * 
+     *
      * @return the game this board belongs to
      */
     public Game getGame() {
         return game;
     }
-    
+
     /**
      * Resets the number of free fields counter.
-     * 
+     *
      * @param game the game the boards are belonging to
      */
-    public static void resetNumberOfFreeFields(Game game){
+    public static void resetNumberOfFreeFields(Game game) {
         numberOfFreeFields += game.getNumberOfColumns() * game.getNumberOfRows();
     }
 }

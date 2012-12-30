@@ -30,7 +30,7 @@ public class UI {
     private AbstractUI abstractUI;
     private String[][] optionsArr = {
         {"help", null, "Shows this help", ""},
-        {"gui", null, "Shows a gui", ""},
+        {"gui", "", "Shows a gui", ""},
         {"noIntro", null, "Starts the game without any introduction", ""},
         {"printNoBoards", null,
             "Prohibits the game from printing the current board on the console after a stone is placed on it.", ""},
@@ -43,7 +43,7 @@ public class UI {
             "Places joker stones (a joker stone is a stone counting for the black and the white player) "
             + "at the given positions.",
             "[see -block]"},
-        {"whiteAuto", null, "The white player is played automatically played", ""},
+        {"whiteAuto", "", "The white player is played automatically played", ""},
         {"blackAuto", null, "The black player is played automatically", ""},
         {"showAutoDebugMatrix", null, "Shows the debug matrix for every automatic action", ""}
     };

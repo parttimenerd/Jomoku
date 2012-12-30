@@ -19,6 +19,7 @@ public class GUI extends AbstractUI {
     private final String REMMI_TEXT = "Remmi. No Player has won. (Overall actions: {{actions}})";
     private int actions = 0;
     private Frame frame;
+    private Runnable frameRunnable;
 
     /**
      *
@@ -42,6 +43,16 @@ public class GUI extends AbstractUI {
             setBlackPlayer(new GUIPlayer(new Player(getGame(), Player.PlayerType.BLACK), this));
         }
         init();
+        frameRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                frame = new Frame(getGame());
+                frame.setVisible(true);
+            }
+        }; 
+        frameRunnable.run();
+        while (frame == null);
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -64,12 +75,12 @@ public class GUI extends AbstractUI {
             java.util.logging.Logger.getLogger(Frame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        frame = new Frame(getGame());
+//        frame = new Frame(getGame());
         /* Create and display the form */
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            @Override
 //            public void run() {
-        frame.setVisible(true);
+//        frame.setVisible(true);
 //            }
 //        });
     }
