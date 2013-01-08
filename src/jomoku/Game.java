@@ -216,6 +216,30 @@ public class Game {
     }
 
     /**
+     * Returns a two dimensional array representing the game board. When the
+     * field is blocked or the opponent has already placed a stone there, then
+     * there's a false otherwise a true at the fields position in the array.
+     *
+     * @param self given player
+     * @return two dimensional array
+     */
+    public boolean[][] getCanStoneBePlacedBooleanWhithoutSelf(Player self) {
+        boolean[][] arr = new boolean[numberOfColumns][numberOfRows];
+        boolean[][] ownBoardArr = self.getBoard().getSimpleStoneArray();
+        boolean[][] opponentBoardArr = getOpponent(self).getBoard().getSimpleStoneArray();
+        boolean[][] blockedStonesArr = Board.getIsBlockedStoneArray(numberOfColumns, numberOfRows);
+        for (int i = 0; i < numberOfColumns; i++) {
+            boolean[] ownRowArr = ownBoardArr[i];
+            boolean[] opponentRowArr = opponentBoardArr[i];
+            boolean[] blockedRowArr = blockedStonesArr[i];
+            for (int j = 0; j < numberOfRows; j++) {
+                arr[i][j] = !(opponentRowArr[j] && !ownRowArr[j]) && !blockedRowArr[j];
+            }
+        }
+        return arr;
+    }
+
+    /**
      * Returns the types of the fields of the combined board as a two
      * dimensional array.
      *

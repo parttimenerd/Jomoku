@@ -46,10 +46,6 @@ public class GUIOpponent extends Opponent {
     }
 
     @Override
-    public void otherPlayerAction(Position position) {
-    }
-
-    @Override
     public void replay(Game game) {
         super.replay(game);
     }

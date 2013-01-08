@@ -43,9 +43,9 @@ public class UI {
             "Places joker stones (a joker stone is a stone counting for the black and the white player) "
             + "at the given positions.",
             "[see -block]"},
-        {"whiteAuto", "", "The white player is played automatically played", ""},
+        {"whiteAuto", null, "The white player is played automatically played", ""},
         {"blackAuto", null, "The black player is played automatically", ""},
-        {"showAutoDebugMatrix", null, "Shows the debug matrix for every automatic action", ""}
+        {"showAutoDebugMatrix", "", "Shows the debug matrix for every automatic action", ""}
     };
     private HashMap<String, String> options = new HashMap<>();
     /**

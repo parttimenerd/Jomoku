@@ -67,6 +67,22 @@ public class Player {
     public PlayerType getType() {
         return type;
     }
+    
+    /**
+     * 
+     * @return the field type of this player
+     */
+    public Game.FieldType getFieldType(){
+        return isWhite() ? Game.FieldType.WHITE : Game.FieldType.BLACK;
+    }
+    
+    /**
+     * 
+     * @return the opponent of this player
+     */
+    public Player getOpponent(){
+        return game.getOpponent(this);
+    }
 
     /**
      * Models the type of a player.

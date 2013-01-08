@@ -1,5 +1,7 @@
 package jomoku;
 
+import sun.net.www.content.audio.x_aiff;
+
 /**
  * Models a black or white stone of this game.
  *
@@ -59,7 +61,7 @@ public class Stone {
     public Board getBoard() {
         return board;
     }
-    
+
     /**
      * Simple position container.
      */
@@ -114,20 +116,31 @@ public class Stone {
         public int getRow() {
             return row;
         }
-        
+
         /**
-         * 
+         *
          * @return the column
          */
-        public int getX(){
+        public int getX() {
             return column;
         }
-        
+
         /**
          * @return the row
          */
         public int getY() {
             return row;
+        }
+
+        /**
+         * Calculates the distance between this position and the given.
+         *
+         * @param column column part of the given position
+         * @param row row part of the given position
+         * @return distance
+         */
+        public double getDistance(int column, int row) {
+            return Math.sqrt(Math.pow(column - this.column, 2) + Math.pow(row - this.row, 2));
         }
 
         @Override

@@ -13,6 +13,7 @@ import jomoku.Stone;
 public abstract class AbstractPlayer {
 
     private Player player;
+    private Player opponent;
     private AbstractUI ui;
 
     /**
@@ -23,6 +24,7 @@ public abstract class AbstractPlayer {
      */
     public AbstractPlayer(Player player, AbstractUI ui) {
         this.player = player;
+        this.opponent = player.getGame().getOpponent(player);
         this.ui = ui;
     }
 
@@ -62,10 +64,18 @@ public abstract class AbstractPlayer {
 
     /**
      *
-     * @return the Jomoku player this object builds the ui for
+     * @return the Jomoku player this object builds the UI for
      */
     public Player getPlayer() {
         return player;
+    }
+
+    /**
+     *
+     * @return the opponent of the Jomoku player this object builds the UI for
+     */
+    public Player getOpponent() {
+        return opponent;
     }
 
     /**

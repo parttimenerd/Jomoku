@@ -318,4 +318,29 @@ public class Board {
     public static void resetNumberOfFreeFields(Game game) {
         numberOfFreeFields += game.getNumberOfColumns() * game.getNumberOfRows();
     }
+
+    /**
+     * Returns a two dimensional array representing a board part with the
+     * specified size. There's the value true in this matrix where the field is
+     * blocked and false where it isn't.
+     *
+     * @param columns number of columns of the board part
+     * @param rows number of rows of the board part
+     * @return two dimensional array
+     */
+    public static boolean[][] getIsBlockedStoneArray(int columns, int rows) {
+        boolean[][] arr = new boolean[columns][rows];
+        for (int i = 0; i < columns; i++) {
+            for (int j = 0; j < rows; j++) {
+                arr[i][j] = false;
+            }
+        }
+        for (int i = 0; i < blockedStonePositions.size(); i++) {
+            Stone.Position position = blockedStonePositions.get(i);
+            if (position.isInBounds(columns, rows)) {
+                arr[position.getColumn()][position.getRow()] = true;
+            }
+        }
+        return arr;
+    }
 }

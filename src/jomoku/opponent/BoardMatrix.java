@@ -3,6 +3,7 @@ package jomoku.opponent;
 import java.util.Random;
 import jomoku.Board;
 import jomoku.Game;
+import jomoku.Player;
 import jomoku.Stone;
 
 /**
@@ -15,21 +16,25 @@ import jomoku.Stone;
 public class BoardMatrix {
 
     private Board board;
+    private Board opponentBoard;
+    private boolean[][] opponentBoardArr;
     private int[][] boardArr;
     private double[][] matrix;
     private int rows;
     private int columns;
     private int inARow;
-    private double base = 1.5;
+    private double base = 3;
     private double middleBonusFactor = 0.0001;
 
     /**
-     * Constructs a BoardMatrix for the given board.
+     * Constructs a BoardMatrix for the given player.
      *
-     * @param board given board
+     * @param player given player
      */
-    public BoardMatrix(Board board) {
-        this.board = board;
+    public BoardMatrix(Player player) {
+        this.board = player.getBoard();
+        this.opponentBoard = player.getGame().getOpponent(player).getBoard();
+        this.opponentBoardArr = player.getGame().getCanStoneBePlacedBooleanWhithoutSelf(player);
         this.columns = board.getNumberOfColumns();
         this.rows = board.getNumberOfRows();
         this.matrix = new double[columns][rows];
@@ -43,7 +48,7 @@ public class BoardMatrix {
      * @return the calculated matrix
      */
     public double[][] calculateMatrix() {
-        matrix = calculateMatrix(boardArr);
+        matrix = calculateMatrix(boardArr, opponentBoardArr);
         return matrix;
     }
 
@@ -54,7 +59,7 @@ public class BoardMatrix {
      * @return the calculated and randomized matrix
      */
     public double[][] calculateMatrix(double randomness) {
-        matrix = calculateMatrix(boardArr, randomness);
+        matrix = calculateMatrix(boardArr, opponentBoardArr, randomness);
         return matrix;
     }
 
@@ -71,22 +76,21 @@ public class BoardMatrix {
 //            System.out.println(Arrays.toString(matrix[i]));
 //        }
     //}
-    private double[][] calculateMatrix(int[][] fieldArr, double randomness) {
-        return ramndomize(calculateMatrix(fieldArr), randomness);
+    private double[][] calculateMatrix(int[][] fieldArr, boolean[][] opponentArray, double randomness) {
+        return ramndomize(calculateMatrix(fieldArr, opponentArray), randomness);
     }
 
-    private double[][] calculateMatrix(int[][] fieldArr) {
-        return calculateMatrix(intToDoubleMatrix(fieldArr));
+    private double[][] calculateMatrix(int[][] fieldArr, boolean[][] opponentArray) {
+        return calculateMatrix(intToDoubleMatrix(fieldArr), opponentArray);
     }
 
-    private double[][] calculateMatrix(double[][] fieldArr) {
+    private double[][] calculateMatrix(double[][] fieldArr, boolean[][] opponentArray) {
         double[][] matrixArr = new double[fieldArr.length][fieldArr[0].length];
         double[][] rotatedBoardArrDouble = changeColumnsAndRows(fieldArr);
         double[][] rotatedMatrix = new double[matrixArr[0].length][matrixArr.length];
-
-        matrixArr = addMatrizes(matrixArr, calculateMatrixValuesVerticalAndDiagonalsLeftTopToRightBottom(fieldArr));
+        matrixArr = calculateMatrixValuesVerticalAndDiagonalsLeftTopToRightBottom(fieldArr, opponentArray);
         rotatedMatrix = addMatrizes(rotatedMatrix,
-                calculateMatrixValuesVerticalAndDiagonalsLeftTopToRightBottom(rotatedBoardArrDouble));
+                calculateMatrixValuesVerticalAndDiagonalsLeftTopToRightBottom(rotatedBoardArrDouble, changeColumnsAndRows(opponentArray)));
 
         matrixArr = addMatrizes(matrixArr, changeColumnsAndRows(rotatedMatrix));
         matrixArr = addMiddleBonus(matrixArr, middleBonusFactor);
@@ -110,35 +114,39 @@ public class BoardMatrix {
         return retArr;
     }
 
-    private double[][] calculateMatrixValuesVerticalAndDiagonalsLeftTopToRightBottom(double[][] origArray) {
+    private double[][] calculateMatrixValuesVerticalAndDiagonalsLeftTopToRightBottom(double[][] origArray, boolean[][] opponentArray) {
         double[][] arr = new double[origArray.length][origArray[0].length];
         for (int i = 0; i < arr.length; i++) {
             double[] row = arr[i];
             for (int j = 0; j < row.length; j++) {
-                arr[i][j] = calculateValueForPositionVertical(origArray, i, j)
-                        + calculateValueForPositionDiagonalsLeftTopToRightBottom(origArray, i, j);
+                arr[i][j] = calculateValueForPositionVertical(origArray, opponentArray, i, j)
+                        + calculateValueForPositionDiagonalsLeftTopToRightBottom(origArray, opponentArray, i, j);
                 //System.out.println("+" + arr[i][j] + " - " +calculateValueForPosition(orig_array, i, j));
             }
         }
         return arr;
     }
 
-    private double calculateValueForPositionVertical(double[][] origArray, int column, int row) {
+    private double calculateValueForPositionVertical(double[][] origArray, boolean[][] opponentArray, int column, int row) {
         if (origArray[column][row] != 0) {
             return Integer.MIN_VALUE;
         }
+        boolean rowBlocked = false;
         double l1 = 0, l2 = 0, missing1 = 0, missing2 = 0;
         for (int i = column; i < column + inARow; i++) {
-            if (i >= origArray.length) {
+            if (i >= origArray.length || rowBlocked) {
                 missing1 += 1;
             } else {
+                rowBlocked = !opponentArray[i][row];
                 l1 += origArray[i][row];
             }
         }
+        rowBlocked = false;
         for (int i = column; i > column - inARow - 1; i--) {
-            if (i < 0) {
+            if (i < 0 || rowBlocked) {
                 missing2 += 1;
             } else {
+                rowBlocked = !opponentArray[i][row];
                 l2 += origArray[i][row];
             }
         }
@@ -149,26 +157,29 @@ public class BoardMatrix {
         }
     }
 
-    private double calculateValueForPositionDiagonalsLeftTopToRightBottom(double[][] origArray, int column, int row) {
+    private double calculateValueForPositionDiagonalsLeftTopToRightBottom(double[][] origArray, boolean[][] opponentArray, int column, int row) {
         if (origArray[column][row] != 0) {
             return Integer.MIN_VALUE;
         }
         double l1 = 0, l2 = 0, missing1 = 0, missing2 = 0;
         double columns = origArray.length;
         double rows = origArray[0].length;
+        boolean rowBlocked = false;
 
         for (int i = 0; i < inARow; i++) {
-            if (i + column >= columns || i + row >= rows) {
+            if (i + column >= columns || i + row >= rows || rowBlocked) {
                 missing1 += 1;
             } else {
+                rowBlocked = !opponentArray[column + i][row + i];
                 l1 += origArray[column + i][row + i];
             }
         }
-
+        rowBlocked = false;
         for (int i = 0; i < inARow; i++) {
-            if (column - i < 0 || row - i < 0) {
+            if (column - i < 0 || row - i < 0 || rowBlocked) {
                 missing2 += 1;
             } else {
+                rowBlocked = !opponentArray[column - i][row - i];
                 l2 += origArray[column - i][row - i];
             }
         }
@@ -194,6 +205,17 @@ public class BoardMatrix {
         double[][] ret_arr = new double[arr[0].length][arr.length];
         for (int c_i = 0; c_i < arr.length; c_i++) {
             double[] row = arr[c_i];
+            for (int r_i = 0; r_i < row.length; r_i++) {
+                ret_arr[r_i][c_i] = row[r_i];
+            }
+        }
+        return ret_arr;
+    }
+
+    private static boolean[][] changeColumnsAndRows(boolean[][] arr) {
+        boolean[][] ret_arr = new boolean[arr[0].length][arr.length];
+        for (int c_i = 0; c_i < arr.length; c_i++) {
+            boolean[] row = arr[c_i];
             for (int r_i = 0; r_i < row.length; r_i++) {
                 ret_arr[r_i][c_i] = row[r_i];
             }
@@ -362,7 +384,7 @@ public class BoardMatrix {
         private double value;
 
         /**
-         * Constructs a matrix value conainer.
+         * Constructs a matrix value container.
          *
          * @param column column number, 0 is the first column
          * @param row row number, 0 is the first row

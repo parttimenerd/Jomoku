@@ -39,8 +39,4 @@ public class ConsoleOpponent extends Opponent {
     public void handleError(String msg) {
         System.err.println(msg);
     }
-
-    @Override
-    public void otherPlayerAction(Position position) {
-    }
 }
